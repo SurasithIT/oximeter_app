@@ -19,8 +19,13 @@ class _DevicesScan extends State<DevicesScan> {
   Future<void> connectDevice(BluetoothDevice device) async {
     print("connect");
     print(device.name);
-    await device.connect(autoConnect: false);
-    print("connected!");
+      // await device.connect(timeout: Duration(seconds: 3));
+      await device.connect(autoConnect: false, timeout: Duration(seconds: 3))
+          .timeout(Duration(seconds: 3), onTimeout: (){
+            print("Cannot connect to device!");
+          }).then((value) {
+            print("connected!");
+          });
 
     deviceStateSub = device.state.listen((deviceState) {
       if (deviceState == BluetoothDeviceState.connected) {
@@ -61,18 +66,24 @@ class _DevicesScan extends State<DevicesScan> {
             stream: flutterBlue.scanResults,
             initialData: [],
             builder: (context, snapshot) {
-            VoidCallback onPressed;
-            onPressed = () => {print("Connect")};
-               return Column(
-                    children: snapshot.data!
-                        .where((device) => device.device.type ==  BluetoothDeviceType.le && !_connectedDevice.contains(device.device))
-                        .map((e) => Column(children: [
-                            Text("Device Name : " + e.device.name),
-                            RaisedButton(onPressed: ()=> connectDevice(e.device),child: Text("Connect")),
-                            // RaisedButton(onPressed: ()=>disconnectDevice(e),child: Text("Disconnect"))
-                        ],)).toList()
-              );}
-        ),
+              VoidCallback onPressed;
+              onPressed = () => {print("Connect")};
+              return Column(
+                  children: snapshot.data!
+                      .where((device) =>
+                          device.device.type == BluetoothDeviceType.le &&
+                          !_connectedDevice.contains(device.device))
+                      .map((e) => Column(
+                            children: [
+                              Text("Device Name : " + e.device.name),
+                              RaisedButton(
+                                  onPressed: () => connectDevice(e.device),
+                                  child: Text("Connect")),
+                              // RaisedButton(onPressed: ()=>disconnectDevice(e),child: Text("Disconnect"))
+                            ],
+                          ))
+                      .toList());
+            }),
         Text("Connected Device"),
         StreamBuilder<List<BluetoothDevice>>(
             stream: flutterBlue.connectedDevices.asStream(),
@@ -83,14 +94,18 @@ class _DevicesScan extends State<DevicesScan> {
               return Column(
                   children: snapshot.data!
                       // .where((device) => device.state == BluetoothDeviceState.connected)
-                      .map((e) => Column(children: [
-                    Text("Device Name : " + e.name),
-                    // RaisedButton(onPressed: ()=>connectDevice(e),child: Text("Connect")),
-                    RaisedButton(onPressed: ()=> disconnectDevice(e),child: Text("Disconnect"))
-                  ],)).toList()
-              );
+                      .map((e) => Column(
+                            children: [
+                              Text("Device Name : " + e.name),
+                              // RaisedButton(onPressed: ()=>connectDevice(e),child: Text("Connect")),
+                              RaisedButton(
+                                  onPressed: () => disconnectDevice(e),
+                                  child: Text("Disconnect"))
+                            ],
+                          ))
+                      .toList());
             })
-      ],);
+      ],
+    );
   }
-
 }
