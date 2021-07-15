@@ -21,7 +21,7 @@ void scanBlutooth(){
   _scanResultsStream = flutterBlue.scanResults.listen((results) {
     // do something with scan results
     for (ScanResult r in results) {
-      print('${r.device.name} found! rssi: ${r.rssi}');
+      print('${r.device.name} found! id: ${r.device.id}, rssi: ${r.rssi}');
     }
   });
   // _scaning = false;
@@ -151,13 +151,13 @@ class _MyHomePageState extends State<MyHomePage> {
           if (snapshot.data!) {
             return FloatingActionButton(
               child: Icon(Icons.stop),
-              onPressed: () => flutterBlue.stopScan(),
+              onPressed: () => stopScan(),
               backgroundColor: Colors.red,
             );
           } else {
             return FloatingActionButton(
                 child: Icon(Icons.search),
-                onPressed: () => flutterBlue.startScan());
+                onPressed: () => scanBlutooth());
                     // .startScan(timeout: Duration(seconds: 4)));
           }
         },
