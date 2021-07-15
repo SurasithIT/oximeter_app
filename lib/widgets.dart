@@ -122,10 +122,16 @@ class _DevicesScan extends State<DevicesScan> {
     print("disconnect");
     print(device.name);
     await device.disconnect();
+    if(streamDataSubscription != null) {
+      await streamDataSubscription.cancel();
+    }
     print("disconnected!");
     setState(() {
       _active = false;
       _connectedDevice.remove(device);
+      pi = 0;
+      spo2 = 0;
+      pulseRate = 0;
     });
   }
 
