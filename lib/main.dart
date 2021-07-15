@@ -11,11 +11,15 @@ void main() {
 FlutterBlue flutterBlue = FlutterBlue.instance;
 StreamSubscription? _scanResultsStream;
 bool _scaning = false;
+List<Guid> configServices = [
+  Guid('cdeacb80-5235-4c07-8846-93a37ee6b86d'), // Jumper
+  Guid('49535343-fe7d-4ae5-8fa9-9fafd205e455') // Berry
+];
 
 void scanBlutooth(){
   _scaning = true;
   // Start scanning
-  flutterBlue.startScan(timeout: Duration(seconds: 4));
+  flutterBlue.startScan(timeout: Duration(seconds: 4), withServices: configServices);
 
 // Listen to scan results
   _scanResultsStream = flutterBlue.scanResults.listen((results) {
