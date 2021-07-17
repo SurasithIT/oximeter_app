@@ -9,38 +9,6 @@ void main() {
   runApp(MyApp());
 }
 
-// FlutterBlue flutterBlue = FlutterBlue.instance;
-// StreamSubscription? _scanResultsStream;
-// bool _scaning = false;
-// List<Guid> configServices = [
-//   Guid('cdeacb80-5235-4c07-8846-93a37ee6b86d'), // Jumper
-//   Guid('49535343-fe7d-4ae5-8fa9-9fafd205e455') // Berry
-// ];
-//
-// void scanBlutooth(){
-//   _scaning = true;
-//   // Start scanning
-//   flutterBlue.startScan(timeout: Duration(seconds: 4), withServices: configServices);
-//
-// // Listen to scan results
-//   _scanResultsStream = flutterBlue.scanResults.listen((results) {
-//     // do something with scan results
-//     for (ScanResult r in results) {
-//       print('${r.device.name} found! id: ${r.device.id}, rssi: ${r.rssi}');
-//     }
-//   });
-//   // _scaning = false;
-//
-// // Stop scanning
-// //   flutterBlue.stopScan();
-// }
-//
-// void stopScan(){
-//   // Stop scanning
-//   flutterBlue.stopScan();
-//   _scanResultsStream!.cancel();
-// }
-
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -165,15 +133,9 @@ class _MyHomePageState extends State<MyHomePage> {
             return FloatingActionButton(
                 child: Icon(Icons.search),
                 onPressed: () => bluetoothHelperService.startScan());
-                    // .startScan(timeout: Duration(seconds: 4)));
           }
         },
       ),
-      // FloatingActionButton(
-      //   onPressed: scanBlutooth,
-      //   tooltip: 'Scan',
-      //   child: _scaning == true ? Icon(Icons.stop) :  Icon(Icons.search),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
