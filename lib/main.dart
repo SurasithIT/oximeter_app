@@ -2,43 +2,44 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:oximeter_app/src/services/BluetoothHelperService.dart';
 import 'package:oximeter_app/widgets.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-FlutterBlue flutterBlue = FlutterBlue.instance;
-StreamSubscription? _scanResultsStream;
-bool _scaning = false;
-List<Guid> configServices = [
-  Guid('cdeacb80-5235-4c07-8846-93a37ee6b86d'), // Jumper
-  Guid('49535343-fe7d-4ae5-8fa9-9fafd205e455') // Berry
-];
-
-void scanBlutooth(){
-  _scaning = true;
-  // Start scanning
-  flutterBlue.startScan(timeout: Duration(seconds: 4), withServices: configServices);
-
-// Listen to scan results
-  _scanResultsStream = flutterBlue.scanResults.listen((results) {
-    // do something with scan results
-    for (ScanResult r in results) {
-      print('${r.device.name} found! id: ${r.device.id}, rssi: ${r.rssi}');
-    }
-  });
-  // _scaning = false;
-
-// Stop scanning
+// FlutterBlue flutterBlue = FlutterBlue.instance;
+// StreamSubscription? _scanResultsStream;
+// bool _scaning = false;
+// List<Guid> configServices = [
+//   Guid('cdeacb80-5235-4c07-8846-93a37ee6b86d'), // Jumper
+//   Guid('49535343-fe7d-4ae5-8fa9-9fafd205e455') // Berry
+// ];
+//
+// void scanBlutooth(){
+//   _scaning = true;
+//   // Start scanning
+//   flutterBlue.startScan(timeout: Duration(seconds: 4), withServices: configServices);
+//
+// // Listen to scan results
+//   _scanResultsStream = flutterBlue.scanResults.listen((results) {
+//     // do something with scan results
+//     for (ScanResult r in results) {
+//       print('${r.device.name} found! id: ${r.device.id}, rssi: ${r.rssi}');
+//     }
+//   });
+//   // _scaning = false;
+//
+// // Stop scanning
+// //   flutterBlue.stopScan();
+// }
+//
+// void stopScan(){
+//   // Stop scanning
 //   flutterBlue.stopScan();
-}
-
-void stopScan(){
-  // Stop scanning
-  flutterBlue.stopScan();
-  _scanResultsStream!.cancel();
-}
+//   _scanResultsStream!.cancel();
+// }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -130,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             StreamBuilder<BluetoothState>(
-              stream: flutterBlue.state,
+              stream: bluetoothHelperService.flutterBlue.state,
                 initialData: BluetoothState.unknown,
                 builder: (context, snapshot){
                   if(snapshot.data == BluetoothState.on){
@@ -139,6 +140,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           Text("Bluetooth Is On!"),
                           Text("press search button to scan device"),
                           DevicesScan(),
+                          ConnectedDevice(),
+                          OximeterDataWidget()
                         ]);
                   }else{
                     return Text("Please turn on Bluetooth");
@@ -149,19 +152,19 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: StreamBuilder<bool>(
-        stream: flutterBlue.isScanning,
+        stream: bluetoothHelperService.flutterBlue.isScanning,
         initialData: false,
         builder: (c, snapshot) {
           if (snapshot.data!) {
             return FloatingActionButton(
               child: Icon(Icons.stop),
-              onPressed: () => stopScan(),
+              onPressed: () => bluetoothHelperService.stopScan(),
               backgroundColor: Colors.red,
             );
           } else {
             return FloatingActionButton(
                 child: Icon(Icons.search),
-                onPressed: () => scanBlutooth());
+                onPressed: () => bluetoothHelperService.startScan());
                     // .startScan(timeout: Duration(seconds: 4)));
           }
         },
