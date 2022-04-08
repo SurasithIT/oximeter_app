@@ -58,6 +58,11 @@ class BluetoothHelperService {
         BluetoothDevice device = results.singleWhere((x) => x.device.id.id == deviceId).device;
         await connectDevice(device);
         print("เชื่อมต่อแล้ว");
+        Fluttertoast.showToast(
+          msg: "เชื่อมต่ออุปกรณ์สำเร็จ",
+          toastLength: Toast.LENGTH_LONG,
+          fontSize: 18.0,
+        );
       }
       else{
         print("ไม่พบอุปกรณ์");
@@ -133,7 +138,6 @@ class BluetoothHelperService {
             print(_myOximeterData);
         }
       } else if (characterUuid == Guid("49535343-1e4d-4bd9-ba61-23c647249616")) {
-
         _myOximeterData["spO2"] = value[4];
         _myOximeterData["pulseRate"] = value[3];
         _myOximeterData["pi"] = (value[0] / 10);
